@@ -20,7 +20,7 @@ Source code file, configuration file, and models are download from the [zip](htt
 Please refer to the following instructions.
 ```
 # create and activate the conda environment
-conda create -n transmil python=3.7 -y
+conda create -n tmil python=3.7 -y
 conda activate transmil
 
 # install pytorch
@@ -37,7 +37,7 @@ pip install -r requirements.txt
 
 Place the Whole slide image in ./DATA
 ```
-./DATA/
+./DATA/XXXX
 ├── slide_1.svs
 ├── slide_2.svs
 │        ⋮
@@ -47,13 +47,13 @@ Place the Whole slide image in ./DATA
 
 Then in a terminal run:
 ```
-python create_patches.py --source DATA --save_dir RESULTS_DIRECTORY/ --patch_size 256 --preset tcga.csv --seg --patch --stitch
+python create_patches.py --source DATA/XXXX --save_dir DATA_PATCHES/XXXX --patch_size 256 --preset tcga.csv --seg --patch --stitch
 
 ```
 
-After running in a terminal, the result will be produced in folder named 'RESULTS_DIRECTORY/', which includes the masks and the sticthes in .jpg and the coordinates of the patches will stored into HD5F files (.h5) like the following structure.
+After running in a terminal, the result will be produced in folder named 'DATA_PATCHES/XXXX', which includes the masks and the sticthes in .jpg and the coordinates of the patches will stored into HD5F files (.h5) like the following structure.
 ```
-RESULTS_DIRECTORY/
+DATA_PATCHES/XXXX/
 ├── masks/
 │   ├── slide_1.jpg
 │   ├── slide_2.jpg
@@ -77,39 +77,14 @@ RESULTS_DIRECTORY/
 
 
 #### 2. Feature Extraction
-For the proposed model 1, use resnet50 as the backbone, and for the proposed method 2 and 3, use resnet152 as the backbone by following this instruction:
-
-Open the models/resnet_custom.py to modify the backbone for the feature extraction part:
-
-For the proposed method 1:
-```
-def resnet50_baseline(pretrained=False):
-    model = ResNet_Baseline(Bottleneck_Baseline, [3, 4, 6, 3])
-    if pretrained:
-        model = load_pretrained_weights(model, 'resnet50')
-    return model
-```
-
-For the proposed method 2 and 3:
-```
-def resnet50_baseline(pretrained=False):
-    model = ResNet_Baseline(Bottleneck_Baseline, [3, 8, 36, 3])
-    if pretrained:
-        model = load_pretrained_weights(model, 'resnet152')
-    return model
-```
 
 In the terminal run:
 ```
-CUDA_VISIBLE_DEVICES=0,1 python extract_features.py --data_h5_dir RESULTS_DIRECTORY/ --data_slide_dir DATA --csv_path RESULTS_DIRECTORY/process_list_autogen.csv --feat_dir FEATURES_DIRECTORY_RESNETxxx/ --batch_size 512 --slide_ext .svs
+CUDA_VISIBLE_DEVICES=0,1 python extract_features.py --data_h5_dir DATA_PATCHES/XXXX/ --data_slide_dir DATA/XXXX --csv_path DATA_PATCHES/XXXX/process_list_autogen.csv --feat_dir DATA_FEATURES/XXXX/ --batch_size 512 --slide_ext .svs
 
 ```
-change "--feat_dir FEATURES_DIRECTORY_RESNETxx/" with the specified backbone to save the features.
 
-
-After running in the terminal, the extracted features will be produced as .pt file for each slide in folder named 'FEATURES_DIRECTORY_RESNETxx/' with specific backbone (e.g. "./FEATURES_DIRECTORY_RESNET50" for the proposed method 1 and "./FEATURES_DIRECTORY_RESNET152" for the proposed method 2 and 3).
-
-example features results for the proposed method 2 and 3:
+example features results:
 ```
 FEATURES_DIRECTORY_RESNET152/
 ├── h5_files/
@@ -129,12 +104,12 @@ FEATURES_DIRECTORY_RESNET152/
 Prepare the training and the testing list containing the labels of the files and put it into ./dataset_csv folder. (We provides the csv sample training and testing list in named "TMB_endometrial_train.csv" and "TMB_endometrial_test.csv")
 
 example of the csv files:
-| slide_id       | case_id     | label   | covariate | 
-| :---           |  :---       | :---:   |:---:| 
-| slide_1        | slide_1     | TMBH   |   F | 
-| slide_2        | slide_2     | TMBL   |   F |
-| ...            | ...         | ...     | ... |
-| slide_n        | slide_n     | TMBL   |   F |
+|      | train          | train_label     | val        | val_label | val        | val_label |  
+| :--- | :---           |  :---           | :---:      |:---:      | :---:      |:---:      | 
+|  0   | slide_1        | 1               | slide_1    |   0       | slide_1    |   0       | 
+|  1   | slide_2        | 0               | slide_2    |   1       | slide_2    |   0       |
+|  ... | ...            | ...             | ...        | ...       | ...        | ...       |
+|  n   | slide_n        | 1               | slide_n    |   1       | slide_n    |   1       |
 
 
 
