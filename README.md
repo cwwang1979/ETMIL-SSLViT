@@ -101,7 +101,7 @@ FEATURES_DIRECTORY_RESNET152/
 ```
 
 #### 3. Training and Testing List
-Prepare the training and the testing list containing the labels of the files and put it into ./dataset_csv folder. (We provides the csv sample training and testing list in named "TMB_endometrial_train.csv" and "TMB_endometrial_test.csv")
+Prepare the training, validation  and the testing list containing the labels of the files and put it into ./dataset_csv folder. (We provides the csv sample training and testing list in named "fold0.csv")
 
 example of the csv files:
 |      | train          | train_label     | val        | val_label | val        | val_label |  
@@ -113,142 +113,31 @@ example of the csv files:
 
 
 
-#### 4. Inference and Evaluation
+#### 4. Inference 
 
-For inference, open the "eval_mtl_concat.py" and set the number of the classes, the label for each class and the testing list location ("TMB_endometrial_test.csv").
+Run this code in the terminal to ensemble the results of the top K models:
 ```
-if args.task == 'dummy_mtl_concat':
-    args.n_classes=2
-    dataset = Generic_MIL_MTL_Dataset(csv_path = 'dataset_csv/TMB_endometrial_test.csv',
-                            data_dir= os.path.join(args.data_root_dir,'pt_files'),
-                            shuffle = False, 
-                            seed = args.seed, 
-                            print_info = True,
-                            label_dicts = [{'TMBL':0, 'TMBH':1}, {'F':0, 'M':1}],
-                            label_cols = ['label', 'covariate'],
-                            patient_strat= False)
-else:
-    raise NotImplementedError
+python ensemble_inf.py --stage='test' --config='Config/TMIL.yaml'  --gpus=0 --top_fold=K
 ```
-Then run this code in the terminal:
-```
-CUDA_VISIBLE_DEVICES=0 python eval_mtl_concat.py --drop_out --k 1 --models_exp_code models --save_exp_code model_prediction --split all --task dummy_mtl_concat  --results_dir results --data_root_dir FEATURES_DIRECTORY
-```
-
-To assess the proposed methods: 
-1. Load the saved models in the ./results folder by changing "--models_exp_code models" with "--models_exp_code Proposed_Method_xx"
-2. change "--save_exp_code model_prediction" with the "--save_exp_code proposed_modelx_prediction"
-3. change the "--data_root_dir FEATURES_DIRECTORY" with the "FEATURES_DIRECTORY_RESNETxx", 
-
-Example for the proposed method 2 in application to the prediction of TMB status for aggressive EC, run this in the terminal:
-```
-CUDA_VISIBLE_DEVICES=0 python eval_mtl_concat.py --drop_out --k 1 --models_exp_code PM2_Aggressive --save_exp_code proposed_model2_prediction --split all --task dummy_mtl_concat  --results_dir results --data_root_dir FEATURES_DIRECTORY_RESNET152
-```
-
-
-These inference part will create a folder named proposed_modelx_prediction in ./eval_results folder (e.g. ./eval_results/EVAL_proposed_model2_prediction) with this following structure:
-```
-./eval_results/EVAL_proposed_model2_prediction/
-├── eval_experiment_proposed_model2_prediction.txt
-├── fold0.txt  
-└── summary.txt
-```
-the file "eval_experiment_proposed_model2_prediction.txt" will contain the configuration of the proposed method 2, the file "fold0.txt" will contain the probability and the prediction for each slides and for the evaluation part, access the file "summary.txt"
 
 ## Training
 #### Preparing Training Splits
 
-To create a splits for training and validation set from the training list automatically. The default proportion for the training:validation splits used in this study is 9:1. Do the stratified sampling by open the create_splits.py, and change this related code with the directory of the training csv, the number of classess and the labels we want to investigates. 
+To create a N fold for training and validation set from the training list. The default proportion for the training:validation splits used in this study is 9:1. 
 ```
-if args.task == 'dummy_mtl_concat':
-    args.n_classes=2
-    dataset = Generic_WSI_MTL_Dataset(csv_path = 'dataset_csv/TMB_endometrial_train.csv',
-                            shuffle = False, 
-                            seed = args.seed, 
-                            print_info = True,
-                            label_dicts = [{'TMBL':0, 'TMBH':1}, {'F':0, 'M':1}],
-                            label_cols = ['label', 'covariate'],
-                            patient_strat= False)
-```
-
-In the terminal run:
-```
-python create_splits.py --task dummy_mtl_concat --seed 1 --k 1
-
+dataset_csv/
+├── fold0.csv
+├── fold1.csv
+│       ⋮
+└── foldN.csv
 ```
 
 #### Training
 
-Open the "main_mtl_concat.py" and  and change this related code with the directory of the training csv, the number of classess and the labels we want to investigates. 
+Run this code in the terminal to training:
 ```
-if args.task == 'dummy_mtl_concat':
-    args.n_classes=2
-    dataset = Generic_MIL_MTL_Dataset(csv_path = 'dataset_csv/TMB_endometrial_train.csv',
-                            data_dir= os.path.join(args.data_root_dir,'pt_files'),
-                            shuffle = False, 
-                            seed = args.seed, 
-                            print_info = True,
-                            label_dicts = [{'TMBL':0, 'TMBH':1}, {'F':0, 'M':1}],
-                            label_cols = ['label', 'covariate'],
-                            patient_strat= False)
-else:
-    raise NotImplementedError
+python ensemble_inf.py --stage='test' --config='Config/TMIL.yaml'  --gpus=0 --top_fold=Z
 ```
-
-For the proposed method 1 and 3, modified the model selection and the early stopping part with F1-Score by opening the "core_utils_mtl_concat.py" and modify this related part:
-```
-"""F1-SCORE"""
-def __call__(self, epoch, val_f1score, model, ckpt_name = 'checkpoint.pt'):
-
-        score = val_f1score[0]
-        print('score:', score)
-
-        if self.best_score is None:
-            self.best_score = score
-            self.save_checkpoint(val_f1score, model, ckpt_name)
-
-        elif score < self.best_score:
-            self.counter += 1
-            print(f'EarlyStopping counter: {self.counter} out of {self.patience}')
-            if self.counter >= self.patience and epoch > self.stop_epoch:
-                self.early_stop = True
-        else:
-            self.best_score = score
-            self.save_checkpoint(val_f1score, model, ckpt_name)
-
-            self.counter = 0
-
-    def save_checkpoint(self, val_f1score, model, ckpt_name):
-
-        '''Saves model when F1-score increased.'''
-        if self.verbose:
-            print(f'F1-Score increased ({self.val_f1score_max} --> {val_f1score}).  Saving model ...')
-
-        torch.save(model.state_dict(), ckpt_name)
-        self.val_f1score_max = val_f1score
-                  .
-                  .
-                  .
-
-  if early_stopping:
-        assert results_dir
-
-        """Cross Entropy""" ###for the proposed method 2 
-        early_stopping(epoch, cls_val_loss, model, ckpt_name = os.path.join(results_dir, "s_{}_checkpoint.pt".format(cur)))
-        """F1-score"""
-        # early_stopping(epoch, cls_val_f1score, model, ckpt_name = os.path.join(results_dir, "s_{}_checkpoint.pt".format(cur)))
-
-        
-        if early_stopping.early_stop:
-            print("Early stopping")
-            return True
-
-```
-Then in a terminal run:
-```
-CUDA_VISIBLE_DEVICES=0 python main_mtl_concat.py --drop_out --early_stopping --lr 2e-4 --k 1 --exp_code saved_model  --task dummy_mtl_concat  --log_data  --data_root_dir FEATURES_DIRECTORY_RESNETxx
-```
-change "--exp_code saved_model" with the model name (e.g."--exp_code Proposed_Method_1") and the "--data_root_dir FEATURES_DIRECTORY_RESNETxx" with the features with the specified bacbone (e.g. --data_root_dir FEATURES_DIRECTORY_RESNET50)
 
 ## License
 This Python source code is released under a creative commons license, which allows for personal and research use only. For a commercial license please contact Prof Ching-Wei Wang. You can view a license summary here:  
