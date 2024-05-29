@@ -101,7 +101,7 @@ FEATURES_DIRECTORY_RESNET152/
 ```
 
 #### 3. Training and Testing List
-Prepare the training, validation  and the testing list containing the labels of the files and put it into ./dataset_csv folder. (We provides the csv sample training and testing list in named "fold0.csv")
+Prepare the training, validation  and the testing list containing the labels of the files and put it into ./dataset_csv folder. (We have provide the csv sample named "fold0.csv")
 
 example of the csv files:
 |      | train          | train_label     | val        | val_label | val        | val_label |  
