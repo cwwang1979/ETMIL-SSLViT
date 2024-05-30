@@ -108,7 +108,7 @@ example of the csv files:
 |  0   | train_slide_1        | 1               | val_slide_1    |   0       | test_slide_1    |   0       | 
 |  1   | train_slide_2        | 0               | val_slide_2    |   1       | test_slide_2    |   0       |
 |  ... | ...            | ...             | ...        | ...       | ...        | ...       |
-|  n   | train_slide_n-1        | 1               |     |          |    |          |
+|  n-1   | train_slide_n        | 1               |     |          |    |          |
 
 
 
