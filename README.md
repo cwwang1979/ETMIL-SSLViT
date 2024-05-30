@@ -118,6 +118,10 @@ To generate the prediction outcome of the ETMIL model, containing K base models:
 ```
 python ensemble_inf.py --stage='test' --config='Config/TMIL.yaml'  --gpus=0 --top_fold=K
 ```
+On the other hand, to generate the prediction outcome of the TMIL model, containing one single base models:
+```
+python ensemble_inf.py --stage='test' --config='Config/TMIL.yaml'  --gpus=0 --top_fold=1
+```
 
 To setup the ETMIL model for diffierent tasks: 
 1. Open the Config file ./Config/TMIL.yaml
