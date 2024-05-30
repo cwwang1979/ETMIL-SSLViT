@@ -11,7 +11,7 @@
 - Python (3.7.11), h5py (2.10.0), opencv-python (4.2.0.34), PyTorch (1.10.1), torchvision (0.11.2), pytorch-lightning (1.2.3).
 
 #### Download
-Execution file, configuration file, and models are download from the [zip](https://drive.google.com/file/d/1R05dqR_s7OC2_xzIi-cAtjTAFqzDRqS1/view?usp=sharing) file.  (For reviewers, "..._cwlab" is the password to decompress the file.)
+Execution file, configuration file, and models are download from the [zip](https://drive.google.com/file/d/1-b5eWTe-J2kSx8BwnLF6wcGbTgKyA7N7/view?usp=drive_link) file.  (For reviewers, "..._cwlab" is the password to decompress the file.)
 
 ## Steps
 #### 1.Installation
