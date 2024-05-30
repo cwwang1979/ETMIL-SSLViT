@@ -114,18 +114,18 @@ example of the csv files:
 
 #### 4. Inference 
 
-Run this code in the terminal to ensemble the results of the top K models:
+To generate the prediction outcome of the ETMIL model, containing K base models:
 ```
 python ensemble_inf.py --stage='test' --config='Config/TMIL.yaml'  --gpus=0 --top_fold=K
 ```
 
-To assess the proposed methods for diffierent tasks: 
+To setup the ETMIL model for diffierent tasks: 
 1. Open the Config file ./Config/TMIL.yaml
 2. Change the log_path in Config/TMIL.yaml to the correlated model path
    
-(e.g. For the Subtype of CRC: "log_path" in Config/TMIL.yaml is "./log/TCGA_CRC/CRC_subtype/ETMIL_SSLViT/")
+(e.g. For prediction of the cancer subtype in CRC: please set the parameter "log_path" in Config/TMIL.yaml as "./log/TCGA_CRC/CRC_subtype/ETMIL_SSLViT/")
 
-The model of each task is place into the correlated folder name, the structure as shown as follows: 
+The model of each task has been stored in the zip file with the following file structure: 
 ```
 log/
 ├── TCGA_CRC/
