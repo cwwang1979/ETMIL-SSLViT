@@ -136,8 +136,14 @@ dataset_csv/
 
 Run this code in the terminal to training:
 ```
-python ensemble_inf.py --stage='test' --config='Config/TMIL.yaml'  --gpus=0 --top_fold=Z
+python train.py --stage='train' --config='Config/TMIL.yaml' --gpus=0 --fold=0
 ```
+
+Run this code in the terminal to training N fold:
+```
+for((FOLD=0;FOLD<N;FOLD++)); do python train.py --stage='train' --config='Config/TMIL.yaml' --gpus=0 --fold $FOLD ; done
+```
+
 
 ## License
 This Python source code is released under a creative commons license, which allows for personal and research use only. For a commercial license please contact Prof Ching-Wei Wang. You can view a license summary here:  
