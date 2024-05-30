@@ -1,18 +1,17 @@
 # ETMIL-OMF
 
-## Dataset
-We utilized endometrial cancer and colorectal cancer anonymized H\&E-stained WSIs collected from The Cancer Genome Atlas (TCGA) cohort. TCGA is a comprehensive repository of tissue specimens from 30 tissue source sites available in the public repositories at the National Institutes of Health, USA ([TCGA Link](https://portal.gdc.cancer.gov/))
-
 
 ## Setup
 
 #### Requirerements
-- Linux (Tested on Ubuntu 18.04)
-- NVIDIA GPU (Tested on a single Nvidia GeForce GTX 1080)
+- Ubuntu 18.04
+- GPU Memory => 12 GB
+- GPU driver version >= 470.182.03
+- GPU CUDA >= 11.4
 - Python (3.7.11), h5py (2.10.0), opencv-python (4.2.0.34), PyTorch (1.10.1), torchvision (0.11.2), pytorch-lightning (1.2.3).
 
 #### Download
-Source code file, configuration file, and models are download from the [zip](https://drive.google.com/file/d/1nzHdmnrSw_1-m4KuF26vVRJRcTzgCRiR/view?usp=drive_link) file.  (For reviewers, the password of the file is in the implementation section of the associated manuscript.)
+Execution file, configuration file, and models are download from the [zip](https://drive.google.com/file/d/1nzHdmnrSw_1-m4KuF26vVRJRcTzgCRiR/view?usp=drive_link) file.  (For reviewers, "..._cwlab" is the password to decompress the file.)
 
 ## Steps
 #### 1.Installation
@@ -35,7 +34,7 @@ pip install -r requirements.txt
 
 #### 1. Tissue Segmentation and Patching
 
-Place the Whole slide image in ./DATA
+Place the whole slide image in ./DATA
 ```
 ./DATA/XXXX
 ├── slide_1.svs
@@ -86,7 +85,7 @@ CUDA_VISIBLE_DEVICES=0,1 python extract_features.py --data_h5_dir DATA_PATCHES/X
 
 example features results:
 ```
-FEATURES_DIRECTORY_RESNET152/
+DATA_FEATURES/XXXX/
 ├── h5_files/
 │   ├── slide_1.h5
 │   ├── slide_2.h5
@@ -101,7 +100,7 @@ FEATURES_DIRECTORY_RESNET152/
 ```
 
 #### 3. Training and Testing List
-Prepare the training, validation  and the testing list containing the labels of the files and put it into ./dataset_csv folder. (We have provide the csv sample named "fold0.csv")
+Prepare the training, validation  and the testing list containing the labels of the files and put it into ./dataset_csv folder. (The csv sample "fold0.csv" is provided)
 
 example of the csv files:
 |      | train          | train_label     | val        | val_label | val        | val_label |  
@@ -134,7 +133,7 @@ dataset_csv/
 
 #### Training
 
-Run this code in the terminal to training:
+Run this code in the terminal to training one fold:
 ```
 python train.py --stage='train' --config='Config/TMIL.yaml' --gpus=0 --fold=0
 ```
