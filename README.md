@@ -134,29 +134,23 @@ The model of each task has been stored in the zip file with the following file s
 log/
 ├── TCGA_CRC/
 │   ├── CRC_subtype
-│   │   ├── ETMIL_SSLViT
-│   │   └── TMIL_SSLViT
+│   │   └── ETMIL_SSLViT
 │   │
 │   ├── Mucinous_TMB_status 
-│   │   ├── ETMIL_SSLViT
-│   │   └── TMIL_SSLViT
+│   │   └── ETMIL_SSLViT
 │   │
 │   └── Non-mucinous_TMB_status
-│       ├── ETMIL_SSLViT
-│       └── TMIL_SSLViT
+│       └── ETMIL_SSLViT
 │
 └── TCGA_EC/
     ├── EC_subtype
-    │   ├── ETMIL_SSLViT
-    │   └── TMIL_SSLViT
+    │   └── ETMIL_SSLViT
     │
     ├── Aggressive_TMB_status
-    │   ├── ETMIL_SSLViT
-    │   └── TMIL_SSLViT
+    │   └── ETMIL_SSLViT
     │
     └── Non-aggressive_TMB_status
-        ├── ETMIL_SSLViT
-        └── TMIL_SSLViT      
+        └── ETMIL_SSLViT      
 ```
 
 
