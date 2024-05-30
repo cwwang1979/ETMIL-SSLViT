@@ -11,7 +11,7 @@
 - Python (3.7.11), h5py (2.10.0), opencv-python (4.2.0.34), PyTorch (1.10.1), torchvision (0.11.2), pytorch-lightning (1.2.3).
 
 #### Download
-Execution file, configuration file, and models are download from the [zip](https://drive.google.com/file/d/1zO-EITr_pRNPiWJXiSwzVXdfSal-XecK/view?usp=drive_link) file.  (For reviewers, "..._cwlab" is the password to decompress the file.)
+Execution file, configuration file, and models are download from the [zip](https://drive.google.com/file/d/1Cs3Uec3SnMmQUGxhu8LdWQ_32xGy9KUP/view) file.  (For reviewers, "..._cwlab" is the password to decompress the file.)
 
 ## Steps
 #### 1.Installation
@@ -103,12 +103,12 @@ DATA_FEATURES/XXXX/
 Prepare the training, validation  and the testing list containing the labels of the files and put it into ./dataset_csv folder. (The csv sample "fold0.csv" is provided)
 
 example of the csv files:
-|      | train          | train_label     | val        | val_label | val        | val_label |  
+|      | train          | train_label     | val        | val_label | test        | test_label |  
 | :--- | :---           |  :---           | :---:      |:---:      | :---:      |:---:      | 
-|  0   | slide_1        | 1               | slide_1    |   0       | slide_1    |   0       | 
-|  1   | slide_2        | 0               | slide_2    |   1       | slide_2    |   0       |
+|  0   | train_slide_1        | 1               | val_slide_1    |   0       | test_slide_1    |   0       | 
+|  1   | train_slide_2        | 0               | val_slide_2    |   1       | test_slide_2    |   0       |
 |  ... | ...            | ...             | ...        | ...       | ...        | ...       |
-|  n   | slide_n        | 1               | slide_n    |   1       | slide_n    |   1       |
+|  n   | train_slide_n-1        | 1               |     |          |    |          |
 
 
 
@@ -118,6 +118,43 @@ Run this code in the terminal to ensemble the results of the top K models:
 ```
 python ensemble_inf.py --stage='test' --config='Config/TMIL.yaml'  --gpus=0 --top_fold=K
 ```
+
+To assess the proposed methods for diffierent tasks: 
+1. Open the Config file ./Config/TMIL.yaml
+2. Change the log_path in Config/TMIL.yaml to the correlated model path
+   
+(e.g. For the Subtype of CRC: "log_path" in Config/TMIL.yaml is "./log/TCGA_CRC/CRC_subtype/ETMIL_SSLViT/")
+
+The model of each task is place into the correlated folder name, the structure as shown as follows: 
+```
+log/
+├── TCGA_CRC/
+│   ├── CRC_subtype
+│   │   ├── ETMIL_SSLViT
+│   │   └── TMIL_SSLViT
+│   │
+│   ├── Mucinous_TMB_status 
+│   │   ├── ETMIL_SSLViT
+│   │   └── TMIL_SSLViT
+│   │
+│   └── Non-mucinous_TMB_status
+│       ├── ETMIL_SSLViT
+│       └── TMIL_SSLViT
+│
+└── TCGA_EC/
+    ├── EC_subtype
+    │   ├── ETMIL_SSLViT
+    │   └── TMIL_SSLViT
+    │
+    ├── Aggressive_TMB_status
+    │   ├── ETMIL_SSLViT
+    │   └── TMIL_SSLViT
+    │
+    └── Non-aggressive_TMB_status
+        ├── ETMIL_SSLViT
+        └── TMIL_SSLViT      
+```
+
 
 ## Training
 #### Preparing Training Splits
@@ -133,14 +170,14 @@ dataset_csv/
 
 #### Training
 
-Run this code in the terminal to training one fold:
-```
-python train.py --stage='train' --config='Config/TMIL.yaml' --gpus=0 --fold=0
-```
-
 Run this code in the terminal to training N fold:
 ```
 for((FOLD=0;FOLD<N;FOLD++)); do python train.py --stage='train' --config='Config/TMIL.yaml' --gpus=0 --fold $FOLD ; done
+```
+
+Run this code in the terminal to training one single fold:
+```
+python train.py --stage='train' --config='Config/TMIL.yaml' --gpus=0 --fold=0
 ```
 
 
