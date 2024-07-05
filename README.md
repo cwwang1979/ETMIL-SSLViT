@@ -20,7 +20,7 @@ Please refer to the following instructions.
 ```
 # create and activate the conda environment
 conda create -n tmil python=3.7 -y
-conda activate transmil
+conda activate tmil
 
 # install pytorch
 ## pip install
