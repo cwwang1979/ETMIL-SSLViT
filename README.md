@@ -1,5 +1,7 @@
 # ETMIL-SSLViT
 
+## Associated Publications
+- (ACCEPTED) Wang et al. (2024) Ensemble transformer-based multiple instance learning to predict pathological subtypes and tumor mutational burden from histopathological whole slide images of endometrial and colorectal cancer, Medical Image Analysis (JCR 2023: IF=10.7, 9/197 COMPUTER SCIENCE, ARTIFICIAL INTELLIGENCE)
 
 ## Setup
 
